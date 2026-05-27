@@ -15,6 +15,7 @@ SELECT
     t.[month],
     t.month_name,
     f.cycle_time_ms,
+    f.loop_counter,
     f.fresult,
     f.error_code,
     f.error_text,
