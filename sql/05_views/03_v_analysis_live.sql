@@ -1,6 +1,6 @@
 -- ============================================================
--- l1.v_analysis — analytické view pro Power BI.
--- Pass/fail logika, marginy, relativní pozice v limitním okně.
+-- l1.v_analysis_live — analytické view pro live Power BI dashboard.
+-- Stejná logika jako v_analysis, ale filtruje jen poslední 3 měsíce.
 -- Originál: sql/_postgres_originals/view.sql (PostgreSQL).
 -- ============================================================
 
@@ -54,5 +54,5 @@ FROM l1.f_traces f
 LEFT JOIN l1.d_limit   l ON l.product_id = f.product_id AND l.test_num = f.test_num
 LEFT JOIN l1.d_product p ON p.product_id = f.product_id
 LEFT JOIN l1.d_time    t ON t.[date]      = CAST(f.[timestamp] AS DATE)
-WHERE f.[timestamp] >= DATEADD(DAY, -30, SYSDATETIME());
+WHERE f.[timestamp] >= DATEADD(MONTH, -3, SYSDATETIME());
 GO
