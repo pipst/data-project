@@ -77,8 +77,13 @@ def gen_measurement(limit_min, limit_max, limit_value, fail_rate, orange_rate) -
 
     # limit_value (přesná hodnota) — jen drobný šum
     if limit_value is not None and limit_min is None and limit_max is None:
-        noise = random.gauss(0, abs(limit_value) * 0.01 if limit_value != 0 else 0.01)
-        return round(limit_value + noise, 4)
+        # Exact value test: v_analysis porovnává s rovností (=), takže pro PASS
+        # musí být měření PŘESNĚ rovno limit_value (žádný šum).
+        # FAIL = vrátit detekovatelnou odchylku.
+        if random.random() < fail_rate:
+            offset = abs(limit_value) * 0.1 if limit_value != 0 else 0.5
+            return round(limit_value + offset * random.choice([-1, 1]), 4)
+        return round(limit_value, 4)
 
     # Jednostranný limit (jen min nebo jen max)
     if limit_min is None:
@@ -116,9 +121,17 @@ def gen_measurement(limit_min, limit_max, limit_value, fail_rate, orange_rate) -
     return round(value, 4)
 
 
-def simulate_cycle(engine, catalog: dict, row_id: int, fail_rate: float, orange_rate: float) -> dict:
-    """Vygeneruje jeden řádek dat a INSERTuje do l0.traces_wide."""
-    product_id = random.choice(list(catalog.keys()))
+def simulate_cycle(engine, catalog: dict, row_id: int, fail_rate: float, orange_rate: float,
+                   product_id: int | None = None, timestamp_override=None) -> dict:
+    """Vygeneruje jeden řádek dat a INSERTuje do l0.traces_wide.
+
+    product_id: pokud None, vybere random z katalogu. Jinak použije zadaný.
+    timestamp_override: pokud zadán (datetime), použije se místo datetime.now().
+    """
+    if product_id is None:
+        product_id = random.choice(list(catalog.keys()))
+    elif product_id not in catalog:
+        raise ValueError(f"Produkt {product_id} nemá aktivní testy v katalogu")
     active_tests = {t["test_num"]: t for t in catalog[product_id]}
 
     # Vygeneruj měření pro každý TP sloupec (jen pro aktivní testy, ostatní NULL)
@@ -138,12 +151,12 @@ def simulate_cycle(engine, catalog: dict, row_id: int, fail_rate: float, orange_
             measurements[tp] = None
 
     # Sestavi řádek
-    now = datetime.now()
+    ts = timestamp_override if timestamp_override is not None else datetime.now()
     row_data = {
         "id": str(row_id),
         "pu_id": str(random.randint(220_000_000_000, 260_000_000_000)),
         "id_product": str(product_id),
-        "timestamp": now,
+        "timestamp": ts,
         "cycle_time_ms": random.randint(800, 1500),
         "loop_counter": random.randint(1, 5),
         "fresult": 0 if fail_count == 0 else 1,
@@ -180,6 +193,45 @@ def get_db_stats(engine) -> dict:
         }
 
 
+def run_backfill(engine, catalog, dates, count_per_day, product_id, fail_rate, orange_rate,
+                 shift_start_h=6, shift_end_h=22) -> int:
+    """Backfill mode: vygeneruje count_per_day kusů pro každý den z `dates` (YYYY-MM-DD).
+
+    Časy kusů jsou rovnoměrně rozprostřené v pracovní směně (shift_start_h..shift_end_h).
+    """
+    from datetime import datetime as dt, timedelta
+    if product_id not in catalog:
+        print(f"❌ Produkt {product_id} nemá aktivní testy v katalogu")
+        return 1
+
+    row_id = next_id(engine)
+    total = 0
+    print(f"\nBackfill: produkt {product_id}, {len(dates)} dní × {count_per_day} kusů")
+    print(f"Časy: {shift_start_h}:00–{shift_end_h}:00 (rovnoměrně)")
+    print("-" * 70)
+
+    shift_sec = (shift_end_h - shift_start_h) * 3600
+    for day_str in dates:
+        day = dt.strptime(day_str, "%Y-%m-%d")
+        step = shift_sec / count_per_day
+        fail_today = 0
+        for i in range(count_per_day):
+            base = i * step + random.uniform(-step * 0.3, step * 0.3)
+            ts = day.replace(hour=shift_start_h) + timedelta(seconds=max(0, base))
+            try:
+                r = simulate_cycle(engine, catalog, row_id, fail_rate, orange_rate,
+                                   product_id=product_id, timestamp_override=ts)
+                if r["status"] == "FAIL":
+                    fail_today += 1
+                row_id += 1
+                total += 1
+            except Exception as exc:  # noqa: BLE001
+                print(f"  ❌ {exc}")
+        print(f"  {day_str}: {count_per_day} kusů uloženo ({fail_today} FAIL, {fail_today/count_per_day*100:.1f}%)")
+    print(f"\n✅ Backfill hotov: {total} kusů")
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description="Simulátor výrobních testovacích dat")
     parser.add_argument("--interval", type=float, default=2.0,
@@ -190,11 +242,40 @@ def main() -> int:
                         help="Pravděpodobnost FAIL měření (default: 0.05 = 5%%)")
     parser.add_argument("--orange-rate", type=float, default=0.15,
                         help="Pravděpodobnost ORANGE měření (default: 0.15 = 15%%)")
+    # Backfill režim
+    parser.add_argument("--date", action="append", default=None, metavar="YYYY-MM-DD",
+                        help="Backfill mode: zadaný den (lze opakovat: --date 2026-06-01 --date 2026-06-02)")
+    parser.add_argument("--product", type=int, default=None,
+                        help="Backfill mode: konkrétní product_id (jinak random per cyklus)")
+    parser.add_argument("--count-per-day", type=int, default=750,
+                        help="Backfill mode: kolik kusů na den (default: 750)")
     args = parser.parse_args()
 
     engine = get_engine()
-
     print("=" * 70)
+
+    # Backfill režim — generuje historická data místo real-time
+    if args.date:
+        print("BACKFILL MODE")
+        print("=" * 70)
+        print(f"Product:       {args.product}")
+        print(f"Dny:           {args.date}")
+        print(f"Kusů/den:      {args.count_per_day}")
+        print(f"Fail rate:     {args.fail_rate * 100:.0f}%")
+        print(f"Orange rate:   {args.orange_rate * 100:.0f}%")
+        print("\nNačítám katalog...")
+        catalog = load_catalog(engine)
+        stats0 = get_db_stats(engine)
+        rc = run_backfill(engine, catalog, args.date, args.count_per_day,
+                          args.product, args.fail_rate, args.orange_rate)
+        print("\nStav DB po backfillu:")
+        stats1 = get_db_stats(engine)
+        for k in stats0:
+            d = stats1[k] - stats0[k]
+            print(f"  {k:<22} {stats1[k]:>10,}  (+{d:,})")
+        return rc
+
+    # Live (původní) režim
     print("UVR Data Simulator")
     print("=" * 70)
     print(f"Interval:    {args.interval}s")
