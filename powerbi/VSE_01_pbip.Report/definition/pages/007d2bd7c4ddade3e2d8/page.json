@@ -1,0 +1,95 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
+  "name": "007d2bd7c4ddade3e2d8",
+  "displayName": "Tests Overview 1",
+  "displayOption": "ActualSize",
+  "height": 720,
+  "width": 1280,
+  "objects": {
+    "background": [
+      {
+        "properties": {
+          "color": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "Literal": {
+                    "Value": "'#F3F3F0'"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    ],
+    "filterCard": [
+      {
+        "properties": {
+          "border": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        },
+        "selector": {
+          "id": "Available"
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "borderColor": {
+            "solid": {
+              "color": {
+                "expr": {
+                  "ThemeDataColor": {
+                    "ColorId": 9,
+                    "Percent": 0
+                  }
+                }
+              }
+            }
+          },
+          "border": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "visualInteractions": [
+    {
+      "source": "2eb5d6ca5c567a014c80",
+      "target": "175eb1d123c0076cc152",
+      "type": "NoFilter"
+    },
+    {
+      "source": "2eb5d6ca5c567a014c80",
+      "target": "dd5bfa336364cd0767ae",
+      "type": "DataFilter"
+    },
+    {
+      "source": "2eb5d6ca5c567a014c80",
+      "target": "10ec2bd7c2ebd94600c7",
+      "type": "NoFilter"
+    },
+    {
+      "source": "2eb5d6ca5c567a014c80",
+      "target": "660e0f8c38031a3c6393",
+      "type": "NoFilter"
+    },
+    {
+      "source": "2eb5d6ca5c567a014c80",
+      "target": "a1a8ac531b7020710303",
+      "type": "DataFilter"
+    }
+  ]
+}

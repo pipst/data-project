@@ -67,6 +67,11 @@ desktop.ini
 # ============================================================
 *.pbix
 *.pbit
+# PBIP — uživatelská nastavení (security tokens, datasetId, cesty)
+**/.pbi/localSettings.json
+**/.pbi/editorSettings.json
+**/.pbi/cache.abf
+*.abf
 
 # ============================================================
 # Logy a build artefakty

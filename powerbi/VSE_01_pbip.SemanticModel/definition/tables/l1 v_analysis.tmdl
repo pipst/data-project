@@ -1,0 +1,408 @@
+table 'l1 v_analysis'
+	lineageTag: e7d5238e-92fe-46e0-94b1-90d8bbbb563a
+
+	measure LSL = MEDIAN('l1 v_analysis'[limit_min])
+		lineageTag: 8a03a127-0288-4975-8d96-aa57eaefb698
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure USL = MEDIAN('l1 v_analysis'[limit_max])
+		lineageTag: 567f5fee-b9c1-42ee-be39-56063ccfc745
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Line Chart Title' = ```
+			
+			SELECTEDVALUE('l1 v_analysis'[test_num]) & " - " & 
+			SELECTEDVALUE('l1 v_analysis'[test_description]) & "; " & 
+			SELECTEDVALUE('l1 v_analysis'[product_group]) & "; MLFB: " & 
+			SELECTEDVALUE('l1 v_analysis'[product_id])
+			```
+		lineageTag: 0a75e38b-6b71-43c0-8ae7-e6c0f876bc19
+
+	measure 'Count of Tests' =
+			
+			VAR total = DISTINCTCOUNT('l1 v_analysis'[id])
+			RETURN IF(total = 0, BLANK(), total)
+		formatString: 0
+		lineageTag: 60caa8c4-b55a-403e-bc47-1b56526e5f72
+
+	measure 'First Pass Count' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('l1 v_analysis'[pu_id]),
+			    'l1 v_analysis'[loop_counter] = 1
+			)
+		formatString: 0
+		lineageTag: b7c6caa1-74c8-4c0c-add3-751d867d908c
+
+	measure 'Retested Count' =
+			
+			CALCULATE(
+			    DISTINCTCOUNT('l1 v_analysis'[pu_id]),
+			    'l1 v_analysis'[loop_counter] > 1
+			)
+		formatString: 0
+		lineageTag: b6765ea3-4a44-49d2-b270-412ef0f53617
+
+	measure FPY = ```
+			
+			VAR passes = CALCULATE(
+			    DISTINCTCOUNT('l1 v_analysis'[pu_id]),
+			    'l1 v_analysis'[fresult] = 1,
+			    'l1 v_analysis'[loop_counter] = 1
+			)
+			
+			VAR total = CALCULATE(
+			    DISTINCTCOUNT('l1 v_analysis'[pu_id]),
+			    'l1 v_analysis'[loop_counter] = 1
+			)
+			
+			RETURN 
+			    IF(
+			        ISBLANK(total), 
+			        BLANK(), 
+			        DIVIDE(passes, total)
+			    )
+			```
+		lineageTag: 9d88b7f2-5ff6-40f3-bf16-86608842207f
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Quality Loss Min' =
+			
+			CALCULATE(
+			    DIVIDE(
+			        SUMX(
+			            VALUES('l1 v_analysis'[id]),
+			            CALCULATE(AVERAGE('l1 v_analysis'[cycle_time_ms]))
+			        ),
+			        60000
+			    ),
+			    'l1 v_analysis'[loop_counter] > 1
+			)
+		lineageTag: d93c1816-17dd-4ce3-aced-144383d9c762
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Machine Time Min' =
+			
+			CALCULATE(
+			    SUMX(
+			        SUMMARIZE('l1 v_analysis', 'l1 v_analysis'[id], 'l1 v_analysis'[cycle_time_ms]),
+			        'l1 v_analysis'[cycle_time_ms]
+			    ) / 60000,
+			    'l1 v_analysis'[loop_counter] = 1
+			)
+		lineageTag: 25f4c234-ce3b-4a30-bc83-fa2ed75e1335
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Error Rate' =
+			
+			DIVIDE(
+			    CALCULATE(
+			        DISTINCTCOUNT('l1 v_analysis'[id]),
+			        'l1 v_analysis'[fresult] = 0
+			    ),
+			    CALCULATE(
+			        DISTINCTCOUNT('l1 v_analysis'[id]),
+			        ALL('l1 v_analysis'[fresult]),
+			        ALL('l1 v_analysis'[error_code]),
+			        ALL('l1 v_analysis'[error_text]),
+			        ALL('l1 v_analysis'[error_label])
+			    )
+			)
+		lineageTag: 944e0b6a-4eb3-42a0-8a82-af8bcd52435c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Error Label' = ```
+			
+			DISTINCTCOUNT('l1 v_analysis'[id]) & "   " & 
+			FORMAT([Error Rate], "0.00 %")
+			```
+		lineageTag: ee35fb42-b934-4cea-b074-6cc02bace2e4
+
+	measure 'Mean Plus 3 Sigma' =
+			
+			AVERAGE('l1 v_analysis'[measured_value]) + 3 * STDEV.S('l1 v_analysis'[measured_value])
+		lineageTag: aa90d785-ffc8-4e42-aea2-d27ce132eb06
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure 'Mean Minus 3 Sigma' =
+			
+			AVERAGE('l1 v_analysis'[measured_value]) - 3 * STDEV.S('l1 v_analysis'[measured_value])
+		lineageTag: 5df7a4d7-a8e8-4f72-bd97-42cc61cff6b5
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column id
+		dataType: int64
+		formatString: 0
+		lineageTag: 6e819e67-926c-4e10-96e7-3fd5bdac772a
+		summarizeBy: sum
+		sourceColumn: id
+
+		annotation SummarizationSetBy = Automatic
+
+	column pu_id
+		dataType: string
+		lineageTag: 5c9e94c2-ac42-47ae-b8a4-5e10a411372b
+		summarizeBy: none
+		sourceColumn: pu_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_id
+		dataType: int64
+		formatString: 0
+		lineageTag: 0734fd44-56a1-4ab5-9c98-5f0703c047c4
+		summarizeBy: sum
+		sourceColumn: product_id
+
+		annotation SummarizationSetBy = Automatic
+
+	column product_group
+		dataType: string
+		lineageTag: 5515726a-160e-4b62-b53f-1c4b906ea95d
+		summarizeBy: none
+		sourceColumn: product_group
+
+		annotation SummarizationSetBy = Automatic
+
+	column timestamp
+		dataType: dateTime
+		formatString: General Date
+		lineageTag: 285b970c-6bd1-47d3-a043-6df932744e75
+		summarizeBy: none
+		sourceColumn: timestamp
+
+		variation Variace
+			isDefault
+			relationship: 5dc706c4-fa24-44c1-8817-b3c05d7a4db2
+			defaultHierarchy: LocalDateTable_4b03cafe-57a2-4850-a14a-816d58cacd61.'Date Hierarchy'
+
+		annotation SummarizationSetBy = Automatic
+
+	column year
+		dataType: int64
+		formatString: 0
+		lineageTag: 591f0c07-41d8-49e0-99b3-a1ca0d2cf2dc
+		summarizeBy: sum
+		sourceColumn: year
+
+		annotation SummarizationSetBy = Automatic
+
+	column month
+		dataType: int64
+		formatString: 0
+		lineageTag: f33bf10c-c9d3-4930-b1c2-6dccfc3d5a78
+		summarizeBy: sum
+		sourceColumn: month
+
+		annotation SummarizationSetBy = Automatic
+
+	column month_name
+		dataType: string
+		lineageTag: abc8819a-1000-42ed-ba33-430c753517ac
+		summarizeBy: none
+		sourceColumn: month_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column cycle_time_ms
+		dataType: int64
+		formatString: 0
+		lineageTag: fcb59446-d696-48b4-abec-d0cc752a044d
+		summarizeBy: sum
+		sourceColumn: cycle_time_ms
+
+		annotation SummarizationSetBy = Automatic
+
+	column fresult
+		dataType: int64
+		formatString: 0
+		lineageTag: a9345ba0-b60a-4d98-8559-9e6e440370d4
+		summarizeBy: sum
+		sourceColumn: fresult
+
+		annotation SummarizationSetBy = Automatic
+
+	column error_code
+		dataType: int64
+		formatString: 0
+		lineageTag: dd4054b5-5e7a-408a-90ff-2fef7ee35ca3
+		summarizeBy: sum
+		sourceColumn: error_code
+
+		annotation SummarizationSetBy = Automatic
+
+	column error_text
+		dataType: string
+		lineageTag: 84d252c8-17f5-43f2-8078-37e4b51b94ce
+		summarizeBy: none
+		sourceColumn: error_text
+
+		annotation SummarizationSetBy = Automatic
+
+	column test_num
+		dataType: string
+		lineageTag: 5cfcc997-5b18-40c7-b97a-52590b0139aa
+		summarizeBy: none
+		sourceColumn: test_num
+
+		annotation SummarizationSetBy = Automatic
+
+	column group_name
+		dataType: string
+		lineageTag: 57333a32-3c17-48bd-acd5-d56b8690916f
+		summarizeBy: none
+		sourceColumn: group_name
+
+		annotation SummarizationSetBy = Automatic
+
+	column test_description
+		dataType: string
+		lineageTag: c712dce1-dc78-4501-a8c0-6bc145b8f865
+		summarizeBy: none
+		sourceColumn: test_description
+
+		annotation SummarizationSetBy = Automatic
+
+	column measured_value
+		dataType: double
+		lineageTag: f452a6ac-080e-4f25-b227-3b3eb5c7b415
+		summarizeBy: none
+		sourceColumn: measured_value
+
+		annotation SummarizationSetBy = User
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column limit_min
+		dataType: double
+		lineageTag: 006188f7-5472-4be9-a211-80962ef6cec9
+		summarizeBy: sum
+		sourceColumn: limit_min
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column limit_max
+		dataType: double
+		lineageTag: 91814461-cb0b-4467-8dc2-c45a9e127fc5
+		summarizeBy: sum
+		sourceColumn: limit_max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column limit_value
+		dataType: double
+		lineageTag: c971c848-4b66-4d30-b5e3-15eb7cd8c89f
+		summarizeBy: sum
+		sourceColumn: limit_value
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column test_pass
+		dataType: int64
+		formatString: 0
+		lineageTag: 1e9cb79b-a33c-45d2-97fd-4e637937139a
+		summarizeBy: sum
+		sourceColumn: test_pass
+
+		annotation SummarizationSetBy = Automatic
+
+	column margin_from_min
+		dataType: double
+		lineageTag: 4ea2b2ff-ddf0-4a74-b831-7973069e415c
+		summarizeBy: sum
+		sourceColumn: margin_from_min
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column margin_to_max
+		dataType: double
+		lineageTag: 49b564f2-11c8-485d-b00e-9391d76658e0
+		summarizeBy: sum
+		sourceColumn: margin_to_max
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column margin_pct
+		dataType: double
+		lineageTag: 5bb27d52-29b5-4da3-8a20-5fe84dcb7794
+		summarizeBy: sum
+		sourceColumn: margin_pct
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column loop_counter
+		dataType: int64
+		formatString: 0
+		lineageTag: 417018f0-737a-448f-b251-123c1be4720b
+		summarizeBy: sum
+		sourceColumn: loop_counter
+
+		annotation SummarizationSetBy = Automatic
+
+	column unit =
+			
+			IF(
+			    SEARCH("(", 'l1 v_analysis'[test_description], 1, 0) > 0,
+			    MID(
+			        'l1 v_analysis'[test_description],
+			        SEARCH("(", 'l1 v_analysis'[test_description]) + 1,
+			        SEARCH(")", 'l1 v_analysis'[test_description]) - SEARCH("(", 'l1 v_analysis'[test_description]) - 1
+			    ),
+			    BLANK()
+			)
+		lineageTag: 91a4a091-c2a0-4e45-b3ab-71a28c830b61
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	column date_only =
+			DATE(
+			    YEAR('l1 v_analysis'[timestamp]),
+			    MONTH('l1 v_analysis'[timestamp]),
+			    DAY('l1 v_analysis'[timestamp])
+			)
+		formatString: Long Date
+		lineageTag: ce697ef8-9822-4436-9a17-6931033ab0e9
+		summarizeBy: none
+
+		changedProperty = DataType
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column error_label = 'l1 v_analysis'[error_code] & ": " & 'l1 v_analysis'[error_text]
+		lineageTag: cc52411e-4c5a-453a-a789-1f5491372fb5
+		summarizeBy: none
+
+		annotation SummarizationSetBy = Automatic
+
+	partition 'l1 v_analysis' = m
+		mode: import
+		source =
+				let
+				    Zdroj = Sql.Database("data-project-team-p.database.windows.net", "free-sql-db-8395568"),
+				    l1_v_analysis = Zdroj{[Schema="l1",Item="v_analysis"]}[Data]
+				in
+				    l1_v_analysis
+

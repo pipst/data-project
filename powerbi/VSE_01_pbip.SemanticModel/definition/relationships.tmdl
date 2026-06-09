@@ -1,0 +1,19 @@
+relationship 5dc706c4-fa24-44c1-8817-b3c05d7a4db2
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'l1 v_analysis'.timestamp
+	toColumn: LocalDateTable_4b03cafe-57a2-4850-a14a-816d58cacd61.Date
+
+relationship 7915c4d7-e738-4997-bf90-84060f3e1eb1
+	joinOnDateBehavior: datePartOnly
+	fromColumn: 'l1 v_analysis_live'.timestamp
+	toColumn: LocalDateTable_d46ea01d-96d6-4fd8-81e6-3bd570486326.Date
+
+relationship 3db067bf-56e1-45f8-b7c8-818bd7af53c6
+	joinOnDateBehavior: datePartOnly
+	fromColumn: Calendar.Date
+	toColumn: LocalDateTable_1ae0519b-9ab8-4692-bfb3-508fd379e7ee.Date
+
+relationship 532b9bdc-1fec-fdec-fc49-3d125bdb3d6e
+	fromColumn: 'l1 v_analysis'.date_only
+	toColumn: Calendar.Date
+
