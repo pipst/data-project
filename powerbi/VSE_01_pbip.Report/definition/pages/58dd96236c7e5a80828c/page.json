@@ -2,7 +2,7 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/page/2.1.0/schema.json",
   "name": "58dd96236c7e5a80828c",
   "displayName": "Tests Overview 2",
-  "displayOption": "ActualSize",
+  "displayOption": "FitToPage",
   "height": 720,
   "width": 1280,
   "objects": {

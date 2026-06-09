@@ -1,13 +1,13 @@
 {
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
-  "name": "d1be377b87c07e0bc0d4",
+  "name": "a3bd883e1539b1bd457b",
   "position": {
-    "x": 963.622641509434,
-    "y": 41.056603773584904,
-    "z": 12002,
-    "height": 318.79245283018867,
-    "width": 113.50943396226415,
-    "tabOrder": 10002
+    "x": 859.77358490566041,
+    "y": 352.60377358490564,
+    "z": 12006,
+    "height": 326.03773584905662,
+    "width": 117.13207547169812,
+    "tabOrder": 10006
   },
   "visual": {
     "visualType": "cardVisual",
@@ -23,12 +23,11 @@
                       "Entity": "l1 v_analysis"
                     }
                   },
-                  "Property": "Mean Minus 3 Sigma"
+                  "Property": "Cp"
                 }
               },
-              "queryRef": "l1 v_analysis.Mean Minus 3 Sigma",
-              "nativeQueryRef": "Mean - 3 σ",
-              "displayName": "Mean - 3 σ"
+              "queryRef": "l1 v_analysis.Cp",
+              "nativeQueryRef": "Cp"
             },
             {
               "field": {
@@ -38,52 +37,39 @@
                       "Entity": "l1 v_analysis"
                     }
                   },
-                  "Property": "Mean Plus 3 Sigma"
+                  "Property": "CpL"
                 }
               },
-              "queryRef": "l1 v_analysis.Mean Plus 3 Sigma",
-              "nativeQueryRef": "Mean + 3 σ",
-              "displayName": "Mean + 3 σ"
+              "queryRef": "l1 v_analysis.CpL",
+              "nativeQueryRef": "CpL"
             },
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "l1 v_analysis"
-                        }
-                      },
-                      "Property": "limit_min"
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
                     }
                   },
-                  "Function": 1
+                  "Property": "CpU"
                 }
               },
-              "queryRef": "Sum(l1 v_analysis.limit_min)",
-              "nativeQueryRef": "Průměr z: limit_min",
-              "displayName": "limit_min"
+              "queryRef": "l1 v_analysis.CpU",
+              "nativeQueryRef": "CpU"
             },
             {
               "field": {
-                "Aggregation": {
+                "Measure": {
                   "Expression": {
-                    "Column": {
-                      "Expression": {
-                        "SourceRef": {
-                          "Entity": "l1 v_analysis"
-                        }
-                      },
-                      "Property": "limit_max"
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
                     }
                   },
-                  "Function": 1
+                  "Property": "Cpk"
                 }
               },
-              "queryRef": "Sum(l1 v_analysis.limit_max)",
-              "nativeQueryRef": "Průměr z: limit_max",
-              "displayName": "limit_max"
+              "queryRef": "l1 v_analysis.Cpk",
+              "nativeQueryRef": "Cpk"
             }
           ]
         }
@@ -98,7 +84,7 @@
                     "Entity": "l1 v_analysis"
                   }
                 },
-                "Property": "Mean Minus 3 Sigma"
+                "Property": "Cp"
               }
             },
             "direction": "Descending"
@@ -248,7 +234,7 @@
           }
         }
       ],
-      "border": [
+      "accentBar": [
         {
           "properties": {
             "show": {
@@ -264,20 +250,13 @@
           }
         }
       ],
-      "grid": [
+      "border": [
         {
           "properties": {
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "true"
-                }
-              }
-            },
-            "style": {
-              "expr": {
-                "Literal": {
-                  "Value": "'solid'"
+                  "Value": "false"
                 }
               }
             }
@@ -335,13 +314,20 @@
           }
         }
       ],
-      "accentBar": [
+      "grid": [
         {
           "properties": {
             "show": {
               "expr": {
                 "Literal": {
-                  "Value": "false"
+                  "Value": "true"
+                }
+              }
+            },
+            "style": {
+              "expr": {
+                "Literal": {
+                  "Value": "'solid'"
                 }
               }
             }

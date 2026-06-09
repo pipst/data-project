@@ -2,10 +2,10 @@
   "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
   "name": "b2c19e98b04b0004010b",
   "position": {
-    "x": 951.54716981132071,
-    "y": 359.84905660377359,
+    "x": 963.622641509434,
+    "y": 352.60377358490564,
     "z": 12004,
-    "height": 311.54716981132077,
+    "height": 327.24528301886795,
     "width": 113.50943396226415,
     "tabOrder": 10004
   },
@@ -27,8 +27,8 @@
                 }
               },
               "queryRef": "l1 v_analysis.Mean Minus 3 Sigma",
-              "nativeQueryRef": "Mean Minus 3 σ",
-              "displayName": "Mean Minus 3 σ"
+              "nativeQueryRef": "Mean - 3 σ",
+              "displayName": "Mean - 3 σ"
             },
             {
               "field": {
@@ -42,8 +42,8 @@
                 }
               },
               "queryRef": "l1 v_analysis.Mean Plus 3 Sigma",
-              "nativeQueryRef": "Mean Plus 3 σ",
-              "displayName": "Mean Plus 3 σ"
+              "nativeQueryRef": "Mean + 3 σ",
+              "displayName": "Mean + 3 σ"
             },
             {
               "field": {
@@ -128,7 +128,7 @@
             "fixedHeight": {
               "expr": {
                 "Literal": {
-                  "Value": "60L"
+                  "Value": "76L"
                 }
               }
             },
@@ -139,6 +139,20 @@
                 }
               }
             }
+          }
+        },
+        {
+          "properties": {
+            "backgroundShow": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
           }
         }
       ],
@@ -225,6 +239,109 @@
               "expr": {
                 "Literal": {
                   "Value": "'center'"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "accentBar": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "border": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "divider": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "fillCustom": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        },
+        {
+          "properties": {
+            "fillColor": {
+              "solid": {
+                "color": {
+                  "expr": {
+                    "ThemeDataColor": {
+                      "ColorId": 0,
+                      "Percent": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "selector": {
+            "id": "default"
+          }
+        }
+      ],
+      "grid": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "true"
+                }
+              }
+            },
+            "style": {
+              "expr": {
+                "Literal": {
+                  "Value": "'solid'"
                 }
               }
             }

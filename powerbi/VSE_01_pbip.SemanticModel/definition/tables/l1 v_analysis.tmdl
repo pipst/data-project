@@ -138,6 +138,71 @@ table 'l1 v_analysis'
 
 		annotation PBI_FormatHint = {"isGeneralNumber":true}
 
+	measure Cp = ```
+			
+			VAR usl = MEDIAN('l1 v_analysis'[limit_max])
+			VAR lsl = MEDIAN('l1 v_analysis'[limit_min])
+			VAR std = STDEV.S('l1 v_analysis'[measured_value])
+			RETURN 
+			    IF(
+			        ISBLANK(usl) || ISBLANK(lsl) || usl = 0 || lsl = 0,
+			        BLANK(),
+			        DIVIDE(usl - lsl, 6 * std)
+			    )
+			```
+		lineageTag: 4549cb73-71e2-496e-aba3-b26070d3686c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure CpU = ```
+			
+			VAR usl = MEDIAN('l1 v_analysis'[limit_max])
+			VAR avge = AVERAGE('l1 v_analysis'[measured_value])
+			VAR std = STDEV.S('l1 v_analysis'[measured_value])
+			RETURN 
+			    IF(
+			        ISBLANK(usl) || std = 0,
+			        BLANK(),
+			        DIVIDE(usl - avge, 3 * std)
+			    )
+			```
+		lineageTag: 777802df-1c31-469e-99d4-5774b3c76fee
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure CpL = ```
+			
+			VAR lsl = MEDIAN('l1 v_analysis'[limit_min])
+			VAR avge = AVERAGE('l1 v_analysis'[measured_value])
+			VAR std = STDEV.S('l1 v_analysis'[measured_value])
+			RETURN 
+			    IF(
+			        ISBLANK(lsl) || std = 0,
+			        BLANK(),
+			        DIVIDE(avge - lsl, 3 * std)
+			    )
+			```
+		lineageTag: ede4fa5c-7f1e-43f9-9cf1-98326654522c
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	measure Cpk = ```
+			
+			VAR cpu = [CpU]
+			VAR cpl = [CpL]
+			RETURN 
+			    SWITCH(
+			        TRUE(),
+			        ISBLANK(cpu) && ISBLANK(cpl), BLANK(),
+			        ISBLANK(cpu), cpl,
+			        ISBLANK(cpl), cpu,
+			        MIN(cpu, cpl)
+			    )
+			```
+		lineageTag: 5c0275ba-4ab3-478b-98de-be89f4781364
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
 	column id
 		dataType: int64
 		formatString: 0

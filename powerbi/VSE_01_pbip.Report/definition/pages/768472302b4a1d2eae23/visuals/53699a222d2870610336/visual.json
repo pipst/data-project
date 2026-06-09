@@ -3,10 +3,10 @@
   "name": "53699a222d2870610336",
   "position": {
     "x": 0,
-    "y": 356.25,
+    "y": 356.22641509433964,
     "z": 12003,
-    "height": 311.25,
-    "width": 851.25,
+    "height": 311.54716981132077,
+    "width": 859.77358490566041,
     "tabOrder": 10003
   },
   "visual": {
@@ -274,14 +274,14 @@
             "viewportHeight": {
               "expr": {
                 "Literal": {
-                  "Value": "301.25D"
+                  "Value": "301.54716981132077D"
                 }
               }
             },
             "viewportWidth": {
               "expr": {
                 "Literal": {
-                  "Value": "841.25D"
+                  "Value": "849.7735849056604D"
                 }
               }
             }
