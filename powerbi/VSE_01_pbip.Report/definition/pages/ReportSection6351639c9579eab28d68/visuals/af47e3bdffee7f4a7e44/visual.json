@@ -1,0 +1,159 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/visualContainer/2.9.0/schema.json",
+  "name": "af47e3bdffee7f4a7e44",
+  "position": {
+    "x": 66.25,
+    "y": 325,
+    "z": 7000,
+    "height": 342.5,
+    "width": 853.75,
+    "tabOrder": 5000
+  },
+  "visual": {
+    "visualType": "pythonVisual",
+    "query": {
+      "queryState": {
+        "Values": {
+          "projections": [
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "measured_value"
+                }
+              },
+              "queryRef": "l1 v_analysis.measured_value",
+              "nativeQueryRef": "measured_value"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "limit_min"
+                }
+              },
+              "queryRef": "l1 v_analysis.limit_min",
+              "nativeQueryRef": "limit_min"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "limit_max"
+                }
+              },
+              "queryRef": "l1 v_analysis.limit_max",
+              "nativeQueryRef": "limit_max"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "test_num"
+                }
+              },
+              "queryRef": "l1 v_analysis.test_num",
+              "nativeQueryRef": "test_num"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "product_group"
+                }
+              },
+              "queryRef": "l1 v_analysis.product_group",
+              "nativeQueryRef": "product_group"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "product_id"
+                }
+              },
+              "queryRef": "l1 v_analysis.product_id",
+              "nativeQueryRef": "product_id"
+            },
+            {
+              "field": {
+                "Column": {
+                  "Expression": {
+                    "SourceRef": {
+                      "Entity": "l1 v_analysis"
+                    }
+                  },
+                  "Property": "test_description"
+                }
+              },
+              "queryRef": "l1 v_analysis.test_description",
+              "nativeQueryRef": "test_description"
+            }
+          ]
+        }
+      }
+    },
+    "objects": {
+      "script": [
+        {
+          "properties": {
+            "source": {
+              "expr": {
+                "Literal": {
+                  "Value": "'# Následující kód pro vytvoření datového rámce a odeberání duplicitních řádků je spuštěn vždy a funguje jako preambule pro váš skript: \n\n# dataset = pandas.DataFrame(measured_value, limit_min, limit_max, test_num, product_group, product_id)\n# dataset = dataset.drop_duplicates()\n\n# Sem vložte nebo zadejte kód skriptu:\n\nimport matplotlib.pyplot as plt\nimport numpy as np\nimport pandas as pd\n\ndataset[\"measured_value\"] = pd.to_numeric(dataset[\"measured_value\"], errors=\"coerce\")\ndataset[\"limit_min\"] = pd.to_numeric(dataset[\"limit_min\"], errors=\"coerce\")\ndataset[\"limit_max\"] = pd.to_numeric(dataset[\"limit_max\"], errors=\"coerce\")\n\ndata = dataset[\"measured_value\"].dropna()\nlsl  = dataset[\"limit_min\"].dropna().median()\nusl  = dataset[\"limit_max\"].dropna().median()\nmean = data.mean()\nstd  = data.std()\n\n# Cp výpočty\ncp  = round((usl - lsl) / (6 * std), 2) if std > 0 else None\ncpu = round((usl - mean) / (3 * std), 2) if std > 0 else None\ncpl = round((mean - lsl) / (3 * std), 2) if std > 0 else None\n\n# Titulek\ntest  = dataset[\"test_num\"].iloc[0]\ndesc  = dataset[\"test_description\"].iloc[0]\ngroup = dataset[\"product_group\"].iloc[0]\npid   = dataset[\"product_id\"].iloc[0]\ntitle = f\"{test} - {desc}; {group}; product_id: {pid}\"\n\nfig, ax = plt.subplots(figsize=(12, 4))\nfig.subplots_adjust(right=0.82)\n\nax.set_title(title, fontsize=9)\nax.hist(data, bins=\"auto\", color=\"#0072C6\", edgecolor=\"white\", alpha=0.9)\nax.axvline(lsl,  color=\"red\",    linestyle=\"--\", linewidth=1.2, label=f\"LSL: {lsl:.3f}\")\nax.axvline(usl,  color=\"red\",    linestyle=\"--\", linewidth=1.2, label=f\"USL: {usl:.3f}\")\nax.axvline(mean, color=\"red\",  linestyle=\"-\",  linewidth=1.2, label=f\"Mean: {mean:.3f}\")\nax.axvline(mean - 3*std, color=\"orange\", linestyle=\":\", linewidth=1, label=f\"-3σ: {mean-3*std:.3f}\")\nax.axvline(mean + 3*std, color=\"orange\", linestyle=\":\", linewidth=1, label=f\"+3σ: {mean+3*std:.3f}\")\n\n# Cp hodnoty vpravo\ncp_text = f\"cp:   {cp}\\ncpU:  {cpu}\\ncpL:  {cpl}\"\nax.text(1.02, 0.5, cp_text, transform=ax.transAxes,\n        fontsize=10, verticalalignment=\"center\", family=\"monospace\")\n\nax.set_xlabel(\"Measured value\")\nax.set_ylabel(\"Count\")\nax.legend(fontsize=8, bbox_to_anchor=(1.0, 1.0), loc=\"upper left\")\nax.grid(axis=\"y\", alpha=0.3)\n\nplt.show()'"
+                }
+              }
+            },
+            "provider": {
+              "expr": {
+                "Literal": {
+                  "Value": "'Python'"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "visualContainerObjects": {
+      "title": [
+        {
+          "properties": {
+            "show": {
+              "expr": {
+                "Literal": {
+                  "Value": "false"
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "drillFilterOtherVisuals": true
+  }
+}

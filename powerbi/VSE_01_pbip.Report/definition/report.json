@@ -1,0 +1,120 @@
+{
+  "$schema": "https://developer.microsoft.com/json-schemas/fabric/item/report/definition/report/3.3.0/schema.json",
+  "themeCollection": {
+    "baseTheme": {
+      "name": "CY23SU08",
+      "reportVersionAtImport": {
+        "visual": "1.8.84",
+        "report": "2.0.84",
+        "page": "1.3.84"
+      },
+      "type": "SharedResources"
+    },
+    "customTheme": {
+      "name": "Default_Theme9810420221645411.json",
+      "reportVersionAtImport": {
+        "visual": "1.8.87",
+        "report": "2.0.87",
+        "page": "1.3.87"
+      },
+      "type": "RegisteredResources"
+    }
+  },
+  "objects": {
+    "section": [
+      {
+        "properties": {
+          "verticalAlignment": {
+            "expr": {
+              "Literal": {
+                "Value": "'Top'"
+              }
+            }
+          }
+        }
+      }
+    ],
+    "outspacePane": [
+      {
+        "properties": {
+          "expanded": {
+            "expr": {
+              "Literal": {
+                "Value": "false"
+              }
+            }
+          },
+          "visible": {
+            "expr": {
+              "Literal": {
+                "Value": "true"
+              }
+            }
+          }
+        }
+      }
+    ]
+  },
+  "publicCustomVisuals": [
+    "choropleth4C77906D867C4C09AFE83BA5E2AA106A",
+    "PBI_CV_EB3A4088_75C5_4746_9D8B_255A7B7ECD6D",
+    "drilldownCartogramD5E1077C70074FFCB26AFC2A636614BF",
+    "PBI_CV_73744D90_4DC9_4F18_8BA5_EE8FA5C98035",
+    "deneb7E15AEF80B9E4D4F8E12924291ECE89A"
+  ],
+  "resourcePackages": [
+    {
+      "name": "SharedResources",
+      "type": "SharedResources",
+      "items": [
+        {
+          "name": "CY23SU08",
+          "path": "BaseThemes/CY23SU08.json",
+          "type": "BaseTheme"
+        }
+      ]
+    },
+    {
+      "name": "RegisteredResources",
+      "type": "RegisteredResources",
+      "items": [
+        {
+          "name": "Default_Theme9810420221645411.json",
+          "path": "Default_Theme9810420221645411.json",
+          "type": "CustomTheme"
+        },
+        {
+          "name": "sie-logo-white-rgb858893040455736.png",
+          "path": "sie-logo-white-rgb858893040455736.png",
+          "type": "Image"
+        }
+      ]
+    },
+    {
+      "name": "HierarchySlicer17_OrgStore",
+      "type": "OrganizationalStoreCustomVisual",
+      "items": [
+        {
+          "name": "resources/HierarchySlicer17_OrgStore.pbiviz.json",
+          "path": "2/38ae3bcd-9579-4fd4-adda-b42e1495d55a/ResourcePackage/BlobIdV2-e74b0986-d5b3-4c73-9851-42261f7fae88-vFcs3oXe7ASE6wzgWCT3Fp-U3InFj8G9Ci.json",
+          "type": "CustomVisualMetadata"
+        }
+      ]
+    }
+  ],
+  "settings": {
+    "useStylableVisualContainerHeader": true,
+    "exportDataMode": "AllowSummarized",
+    "defaultDrillFilterOtherVisuals": true,
+    "allowChangeFilterTypes": true,
+    "useEnhancedTooltips": false,
+    "useDefaultAggregateDisplayName": true
+  },
+  "slowDataSourceSettings": {
+    "isCrossHighlightingDisabled": false,
+    "isSlicerSelectionsButtonEnabled": false,
+    "isFilterSelectionsButtonEnabled": false,
+    "isFieldWellButtonEnabled": false,
+    "isApplyAllButtonEnabled": true
+  }
+}

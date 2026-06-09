@@ -1,0 +1,24 @@
+model Model
+	culture: en-US
+	defaultPowerBIDataSourceVersion: powerBI_V3
+	sourceQueryCulture: pt-PT
+	dataAccessOptions
+		legacyRedirects
+		returnErrorValuesAsNull
+
+annotation __PBI_TimeIntelligenceEnabled = 1
+
+annotation PBI_QueryOrder = ["l1 v_analysis","l1 v_analysis_live"]
+
+annotation PBI_ProTooling = ["DevMode"]
+
+ref table DateTableTemplate_0f3c6cba-4ee6-4ffb-bc9b-f7f8802b6b8d
+ref table 'l1 v_analysis'
+ref table LocalDateTable_4b03cafe-57a2-4850-a14a-816d58cacd61
+ref table 'l1 v_analysis_live'
+ref table LocalDateTable_d46ea01d-96d6-4fd8-81e6-3bd570486326
+ref table Calendar
+ref table LocalDateTable_1ae0519b-9ab8-4692-bfb3-508fd379e7ee
+
+ref cultureInfo en-US
+
