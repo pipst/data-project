@@ -6492,7 +6492,7 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "Mean Plus 3 σ": {
+			          "Mean + 3 σ": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
@@ -6636,13 +6636,91 @@ cultureInfo en-US
 			          }
 			        },
 			        {
-			          "Mean Minus 3 σ": {
+			          "Mean - 3 σ": {
 			            "State": "Suggested",
 			            "Source": {
 			              "Type": "External",
 			              "Agent": "PowerBI.VisualColumnRename"
 			            },
 			            "Weight": 0.9
+			          }
+			        }
+			      ]
+			    },
+			    "l1_v_analysis.cp": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "l1 v_analysis",
+			          "ConceptualProperty": "Cp"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cp": {
+			            "State": "Generated"
+			          }
+			        }
+			      ]
+			    },
+			    "l1_v_analysis.cp_U": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "l1 v_analysis",
+			          "ConceptualProperty": "CpU"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cp U": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "CpU": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "l1_v_analysis.cp_L": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "l1 v_analysis",
+			          "ConceptualProperty": "CpL"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cp L": {
+			            "State": "Generated"
+			          }
+			        },
+			        {
+			          "CpL": {
+			            "Type": "Noun",
+			            "State": "Generated",
+			            "Weight": 0.99
+			          }
+			        }
+			      ]
+			    },
+			    "l1_v_analysis.cpk": {
+			      "Definition": {
+			        "Binding": {
+			          "ConceptualEntity": "l1 v_analysis",
+			          "ConceptualProperty": "Cpk"
+			        }
+			      },
+			      "State": "Generated",
+			      "Terms": [
+			        {
+			          "cpk": {
+			            "State": "Generated"
 			          }
 			        }
 			      ]
@@ -7187,6 +7265,138 @@ cultureInfo en-US
 			          "State": "Generated",
 			          "Weight": 0.99,
 			          "ID": "calendars_have_l1_v_analysises"
+			        }
+			      ]
+			    },
+			    "l1_v_analysis_has_cpk": {
+			      "Binding": {
+			        "ConceptualEntity": "l1 v_analysis"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "l1_v_analysis": {
+			          "Target": {
+			            "Entity": "l1_v_analysis"
+			          }
+			        },
+			        "l1_v_analysis.cpk": {
+			          "Target": {
+			            "Entity": "l1_v_analysis.cpk"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "l1_v_analysis"
+			            },
+			            "Object": {
+			              "Role": "l1_v_analysis.cpk"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "l1_v_analysises_have_cpk"
+			        }
+			      ]
+			    },
+			    "l1_v_analysis_has_cp_L": {
+			      "Binding": {
+			        "ConceptualEntity": "l1 v_analysis"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "l1_v_analysis": {
+			          "Target": {
+			            "Entity": "l1_v_analysis"
+			          }
+			        },
+			        "l1_v_analysis.cp_L": {
+			          "Target": {
+			            "Entity": "l1_v_analysis.cp_L"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "l1_v_analysis"
+			            },
+			            "Object": {
+			              "Role": "l1_v_analysis.cp_L"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "l1_v_analysises_have_cp_L"
+			        }
+			      ]
+			    },
+			    "l1_v_analysis_has_cp_U": {
+			      "Binding": {
+			        "ConceptualEntity": "l1 v_analysis"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "l1_v_analysis": {
+			          "Target": {
+			            "Entity": "l1_v_analysis"
+			          }
+			        },
+			        "l1_v_analysis.cp_U": {
+			          "Target": {
+			            "Entity": "l1_v_analysis.cp_U"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "l1_v_analysis"
+			            },
+			            "Object": {
+			              "Role": "l1_v_analysis.cp_U"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "l1_v_analysises_have_cp_U"
+			        }
+			      ]
+			    },
+			    "l1_v_analysis_has_cp": {
+			      "Binding": {
+			        "ConceptualEntity": "l1 v_analysis"
+			      },
+			      "State": "Generated",
+			      "Roles": {
+			        "l1_v_analysis": {
+			          "Target": {
+			            "Entity": "l1_v_analysis"
+			          }
+			        },
+			        "l1_v_analysis.cp": {
+			          "Target": {
+			            "Entity": "l1_v_analysis.cp"
+			          }
+			        }
+			      },
+			      "Phrasings": [
+			        {
+			          "Attribute": {
+			            "Subject": {
+			              "Role": "l1_v_analysis"
+			            },
+			            "Object": {
+			              "Role": "l1_v_analysis.cp"
+			            }
+			          },
+			          "State": "Generated",
+			          "Weight": 0.99,
+			          "ID": "l1_v_analysises_have_cp"
 			        }
 			      ]
 			    },
