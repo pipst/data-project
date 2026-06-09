@@ -17,6 +17,7 @@ CREATE TABLE l1.watchdog_alerts (
     last_value   DECIMAL(18,6) NULL,
     limit_min    DECIMAL(18,6) NULL,
     limit_max    DECIMAL(18,6) NULL,
+    limit_value  DECIMAL(18,6) NULL,
     [message]    VARCHAR(MAX)  NULL
 );
 GO

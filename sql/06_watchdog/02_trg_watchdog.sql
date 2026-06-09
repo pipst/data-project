@@ -53,10 +53,11 @@ BEGIN
     IF @consecutive >= 2
     BEGIN
         INSERT INTO l1.watchdog_alerts
-            (product_id, test_num, fail_count, last_value, limit_min, limit_max, [message])
+            (product_id, test_num, fail_count, last_value,
+             limit_min, limit_max, limit_value, [message])
         VALUES (
             @product_id, @test_num, @consecutive, @measured,
-            @limit_min, @limit_max,
+            @limit_min, @limit_max, @limit_value,
             CONCAT('ALERT: ', @consecutive, ' consecutive fails for product ',
                    @product_id, ' test ', @test_num,
                    ' (last value: ', CAST(@measured AS VARCHAR(30)), ')')
@@ -65,7 +66,7 @@ BEGIN
 END;
 GO
 
-CREATE OR ALTER TRIGGER trg_watchdog_consecutive_fails
+CREATE OR ALTER TRIGGER l1.trg_watchdog_consecutive_fails
 ON l1.f_traces
 AFTER INSERT
 AS

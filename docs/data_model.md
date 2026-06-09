@@ -119,3 +119,16 @@ Detail v [../sql/04_transform/README.md](../sql/04_transform/README.md).
 
 ### Jak se generuje `d_time`
 PostgreSQL `generate_series(start, end, '1 day')` → **T-SQL rekurzivní CTE** s `OPTION (MAXRECURSION 0)`.
+
+## Real-time ingest
+
+Po prvotním naplnění existují **2 T-SQL triggery**, které drží mart vrstvu konzistentní bez nutnosti opakovaného spouštění `04_transform/`:
+
+| Trigger | Tabulka | Akce |
+|---|---|---|
+| `l0.trg_traces_wide_to_f_traces` | `l0.traces_wide` AFTER INSERT | UNPIVOT nových řádků do `l1.f_traces` + doplnit `l1.d_time` |
+| `l1.trg_watchdog_consecutive_fails` | `l1.f_traces` AFTER INSERT | Detekce 2 consecutive failů, INSERT do `l1.watchdog_alerts` |
+
+Triggery jsou kaskádové: INSERT do `l0.traces_wide` → trigger UNPIVOT do `l1.f_traces` → watchdog trigger případně vygeneruje alert. Power BI (Import + Refresh) tak vidí změny ihned.
+
+Generování realistických dat: viz [`scripts/04_simulator.py`](../scripts/04_simulator.py) — live režim i backfill konkrétních dnů. Detail triggerů: [`sql/07_etl_trigger/README.md`](../sql/07_etl_trigger/README.md), [`sql/06_watchdog/`](../sql/06_watchdog/).
