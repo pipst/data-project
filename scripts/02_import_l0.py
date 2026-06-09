@@ -85,7 +85,7 @@ def import_traces(engine, path: Path) -> int:
     with engine.begin() as conn:
         for chunk in tqdm(reader, unit="chunk", desc=path.name):
             chunk = normalize_columns(chunk)
-            chunk = parse_timestamps(chunk, ["timestamp"])
+            chunk = parse_timestamps(chunk, ["timestamp"], fmt="%d.%m.%Y %H:%M:%S")
             chunk.to_sql(
                 table,
                 conn,
