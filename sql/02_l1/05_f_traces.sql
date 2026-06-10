@@ -9,10 +9,12 @@ CREATE TABLE l1.f_traces (
     product_id     INT           NULL,
     [timestamp]    DATETIME2     NULL,
     cycle_time_ms  INT           NULL,
+    cycle_dif_ms   INT           NULL,
     loop_counter   SMALLINT      NULL,
     fresult        SMALLINT      NULL,
     error_code     INT           NULL,
     error_text     VARCHAR(120)  NULL,
+    TP006          VARCHAR(255)  NULL,
     test_num       VARCHAR(8)    NOT NULL,
     measured_value DECIMAL(18,6) NULL,
     CONSTRAINT pk_f_traces PRIMARY KEY (id, test_num)
