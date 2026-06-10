@@ -37,6 +37,7 @@ TARGETS = {
     "traces_gbs.csv": "traces_wide",
     "ciselnik1.csv": "ciselnik_products",
     "ciselnik2.csv": "ciselnik_mapping",
+    "ciselnik3.csv": "ciselnik_voltage"
 }
 
 
@@ -85,7 +86,7 @@ def import_traces(engine, path: Path) -> int:
     with engine.begin() as conn:
         for chunk in tqdm(reader, unit="chunk", desc=path.name):
             chunk = normalize_columns(chunk)
-            chunk = parse_timestamps(chunk, ["timestamp"])
+            chunk = parse_timestamps(chunk, ["timestamp"], fmt="%d.%m.%Y %H:%M:%S.%f")
             chunk.to_sql(
                 table,
                 conn,
@@ -166,6 +167,12 @@ def main() -> None:
         engine,
         DATA_RAW / "ciselnik2.csv",
         TARGETS["ciselnik2.csv"],
+    )
+    import_small(
+        engine,
+        DATA_RAW / "ciselnik3.csv",
+        TARGETS["ciselnik3.csv"],
+        int_string_cols=["product_id"],  # "294.0" → "294"
     )
 
     report_row_counts(engine)
