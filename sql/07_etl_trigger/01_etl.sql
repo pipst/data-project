@@ -12,24 +12,57 @@ AS
 BEGIN
     SET NOCOUNT ON;
 
+    -- cycle_dif_ms: rozdíl oproti předchozímu záznamu stejného pu_id
+    -- Musíme vzít inserted + existující f_traces pro správný LAG přes hranici insertu
+    WITH wide_with_dif AS (
+        SELECT
+            f.id,
+            f.pu_id,
+            f.id_product,
+            f.[timestamp],
+            f.cycle_time_ms,
+            f.loop_counter,
+            f.fresult,
+            f.error_code,
+            f.error_text,
+            f.TP006,
+            f.TP010, f.TP011, f.TP012, f.TP013, f.TP014,
+            f.TP015, f.TP016, f.TP017, f.TP018, f.TP019,
+            f.TP020, f.TP021, f.TP022, f.TP023, f.TP024,
+            f.TP025, f.TP026, f.TP027, f.TP028, f.TP029,
+            f.TP030, f.TP031, f.TP032, f.TP033, f.TP034,
+            f.TP035, f.TP036, f.TP037, f.TP038, f.TP039,
+            f.TP040, f.TP041,
+            is_new = 1,
+            DATEDIFF_BIG(MILLISECOND,
+                LAG(f.[timestamp]) OVER (
+                    PARTITION BY f.pu_id
+                    ORDER BY f.[timestamp]
+                ),
+                f.[timestamp]
+            ) AS cycle_dif_ms
+        FROM inserted f
+    )
     INSERT INTO l1.f_traces
-        (id, pu_id, product_id, [timestamp], cycle_time_ms, loop_counter,
-         fresult, error_code, error_text, test_num, measured_value)
+        (id, pu_id, product_id, [timestamp], cycle_time_ms, cycle_dif_ms, loop_counter,
+         fresult, error_code, error_text, tp006, test_num, measured_value)
     SELECT
         TRY_CAST(f.id AS BIGINT)          AS id,
         f.pu_id,
         TRY_CAST(f.id_product AS INT)     AS product_id,
         f.[timestamp],
         TRY_CAST(f.cycle_time_ms AS INT)  AS cycle_time_ms,
+        TRY_CAST(f.cycle_dif_ms AS INT)   AS cycle_dif_ms,
         CAST(f.loop_counter AS SMALLINT)  AS loop_counter,
         TRY_CAST(f.fresult AS SMALLINT)   AS fresult,
         TRY_CAST(f.error_code AS INT)     AS error_code,
         f.error_text,
+        f.TP006,
         t.test_num,
         t.measured_value
-    FROM inserted f                          -- pouze nově vložené řádky
+    FROM wide_with_dif f
     CROSS APPLY (VALUES
-        ('TP010', f.TP010), ('TP012', f.TP012), ('TP013', f.TP013), ('TP014', f.TP014),
+        ('TP010', f.TP010), ('TP011', f.TP011), ('TP012', f.TP012), ('TP013', f.TP013), ('TP014', f.TP014),
         ('TP015', f.TP015), ('TP016', f.TP016), ('TP017', f.TP017), ('TP018', f.TP018),
         ('TP019', f.TP019), ('TP020', f.TP020), ('TP021', f.TP021), ('TP022', f.TP022),
         ('TP023', f.TP023), ('TP024', f.TP024), ('TP025', f.TP025), ('TP026', f.TP026),
@@ -47,7 +80,7 @@ BEGIN
             AND c.test_num   = t.test_num
             AND c.active     = 1
       );
-
+      
     -- d_time: doplnit případné nové datumy (ignoruje existující)
     INSERT INTO l1.d_time
         ([date], [day], day_name, [month], month_name, [quarter], [year], is_weekend)
